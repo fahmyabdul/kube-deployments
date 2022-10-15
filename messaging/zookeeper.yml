@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysql-storage
+  name: zookeeper-storage
 spec:
   storageClassName: openebs-hostpath
   accessModes:
@@ -10,13 +10,13 @@ spec:
     - ReadWriteMany
     - ReadOnlyMany
   hostPath:
-    path: "/home/fahmyabdul/.strg_kube/mysql"
+    path: "/home/fahmyabdul/.strg_kube/zookeeper"
   capacity:
-    storage: 4Gi
+    storage: 5Gi
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: mysql-claim
+    name: zookeeper-claim
     namespace: fahmy-system
 
 ---
@@ -24,7 +24,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: fahmy-system
-  name: mysql-claim
+  name: zookeeper-claim
 spec:
   accessModes:
   - ReadWriteOnce
@@ -32,57 +32,57 @@ spec:
   - ReadOnlyMany
   resources:
     requests:
-      storage: 4Gi
+      storage: 5Gi
   storageClassName: openebs-hostpath
   volumeMode: Filesystem
-  volumeName: mysql-storage
+  volumeName: zookeeper-storage
 
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   namespace: fahmy-system
-  name: mysql
+  name: zookeeper
   labels:
-    app: mysql
+    app: zookeeper
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: zookeeper
   template:
     metadata:
       labels:
-        app: mysql
+        app: zookeeper
     spec:
       containers:
-      - name: mysql
-        image: mysql
+      - name: zookeeper
+        image: docker.io/bitnami/zookeeper:3.8
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: example
+        - name: ALLOW_ANONYMOUS_LOGIN
+          value: "yes"
         volumeMounts:
-        - mountPath: /var/lib/mysql
-          name: mysql-vol-1
+        - mountPath: /bitnami
+          name: zookeeper-vol-1
       volumes:
-      - name: mysql-vol-1
+      - name: zookeeper-vol-1
         persistentVolumeClaim:
-          claimName: mysql-claim
+          claimName: zookeeper-claim
           
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: fahmy-system
-  name: mysql-lb
+  name: zookeeper-lb
   labels:
-    app: mysql-lb
+    app: zookeeper-lb
 spec:
   selector:
-    app: mysql
+    app: zookeeper
   ports:
     - protocol: TCP
-      port: 3306
-      targetPort: 3306
-      nodePort: 30002
+      port: 2181
+      targetPort: 2181
+      nodePort: 30005
   type: LoadBalancer

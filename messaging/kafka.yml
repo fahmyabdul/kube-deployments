@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysql-storage
+  name: kafka-storage
 spec:
   storageClassName: openebs-hostpath
   accessModes:
@@ -10,13 +10,13 @@ spec:
     - ReadWriteMany
     - ReadOnlyMany
   hostPath:
-    path: "/home/fahmyabdul/.strg_kube/mysql"
+    path: "/home/fahmyabdul/.strg_kube/kafka"
   capacity:
-    storage: 4Gi
+    storage: 5Gi
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: mysql-claim
+    name: kafka-claim
     namespace: fahmy-system
 
 ---
@@ -24,7 +24,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: fahmy-system
-  name: mysql-claim
+  name: kafka-claim
 spec:
   accessModes:
   - ReadWriteOnce
@@ -32,57 +32,59 @@ spec:
   - ReadOnlyMany
   resources:
     requests:
-      storage: 4Gi
+      storage: 5Gi
   storageClassName: openebs-hostpath
   volumeMode: Filesystem
-  volumeName: mysql-storage
+  volumeName: kafka-storage
 
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   namespace: fahmy-system
-  name: mysql
+  name: kafka
   labels:
-    app: mysql
+    app: kafka
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: kafka
   template:
     metadata:
       labels:
-        app: mysql
+        app: kafka
     spec:
       containers:
-      - name: mysql
-        image: mysql
+      - name: kafka
+        image: docker.io/bitnami/kafka:3.3
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: example
+        - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+          value: zookeeper-lb.fahmy-system.svc.cluster.local:2181
+        - name: ALLOW_PLAINTEXT_LISTENER
+          value: "yes"
         volumeMounts:
-        - mountPath: /var/lib/mysql
-          name: mysql-vol-1
+        - mountPath: /bitnami
+          name: kafka-vol-1
       volumes:
-      - name: mysql-vol-1
+      - name: kafka-vol-1
         persistentVolumeClaim:
-          claimName: mysql-claim
+          claimName: kafka-claim
           
 ---
 apiVersion: v1
 kind: Service
 metadata:
   namespace: fahmy-system
-  name: mysql-lb
+  name: kafka-lb
   labels:
-    app: mysql-lb
+    app: kafka-lb
 spec:
   selector:
-    app: mysql
+    app: kafka
   ports:
     - protocol: TCP
-      port: 3306
-      targetPort: 3306
-      nodePort: 30002
+      port: 9092
+      targetPort: 9092
+      nodePort: 30004
   type: LoadBalancer

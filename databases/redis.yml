@@ -1,0 +1,124 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-config-storage
+spec:
+  storageClassName: openebs-hostpath
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/fahmyabdul/.strg_kube/redis/config"
+  capacity:
+    storage: 500Mi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: redis-config-claim
+    namespace: fahmy-system
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: fahmy-system
+  name: redis-config-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+  storageClassName: openebs-hostpath
+  volumeMode: Filesystem
+  volumeName: redis-config-storage
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-data-storage
+spec:
+  storageClassName: openebs-hostpath
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/fahmyabdul/.strg_kube/redis/data"
+  capacity:
+    storage: 2Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: redis-data-claim
+    namespace: fahmy-system
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: fahmy-system
+  name: redis-data-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: openebs-hostpath
+  volumeMode: Filesystem
+  volumeName: redis-data-storage
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: fahmy-system
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.0.5-alpine
+        env:
+        - name: redis_PASSWORD
+          value: example
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data-1
+        - mountPath: /etc/redis
+          name: redis-config-1
+      volumes:
+      - name: redis-config-1
+        persistentVolumeClaim:
+          claimName: redis-config-claim
+      - name: redis-data-1
+        persistentVolumeClaim:
+          claimName: redis-data-claim
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: fahmy-system
+  name: redis-lb
+  labels:
+    app: redis-lb
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+      nodePort: 30003
+  type: LoadBalancer

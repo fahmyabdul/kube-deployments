@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-storage
+spec:
+  storageClassName: openebs-hostpath
+  accessModes:
+    - ReadWriteOnce
+    - ReadWriteMany
+    - ReadOnlyMany
+  hostPath:
+    path: "/home/fahmyabdul/.strg_kube/postgres"
+  capacity:
+    storage: 5Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: postgres-claim
+    namespace: fahmy-system
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: fahmy-system
+  name: postgres-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  - ReadWriteMany
+  - ReadOnlyMany
+  resources:
+    requests:
+      storage: 4Gi
+  storageClassName: openebs-hostpath
+  volumeMode: Filesystem
+  volumeName: postgres-storage
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: fahmy-system
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        env:
+        - name: POSTGRES_PASSWORD
+          value: example
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-vol-1
+      volumes:
+      - name: postgres-vol-1
+        persistentVolumeClaim:
+          claimName: postgres-claim
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: fahmy-system
+  name: postgres-lb
+  labels:
+    app: postgres-lb
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+      nodePort: 30725
+  type: LoadBalancer

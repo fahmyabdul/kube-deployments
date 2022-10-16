@@ -59,10 +59,20 @@ spec:
       - name: kafka
         image: docker.io/bitnami/kafka:3.3
         env:
-        - name: KAFKA_CFG_ZOOKEEPER_CONNECT
-          value: zookeeper-lb.fahmy-system.svc.cluster.local:2181
-        - name: ALLOW_PLAINTEXT_LISTENER
-          value: "yes"
+          - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+            value: zookeeper-lb.fahmy-system.svc.cluster.local:2181
+          - name: ALLOW_PLAINTEXT_LISTENER
+            value: "yes"
+          - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+            value: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+          - name: KAFKA_CFG_LISTENERS
+            value: CLIENT://:9092,EXTERNAL://:9093
+          - name: KAFKA_CFG_ADVERTISED_LISTENERS
+            value: CLIENT://kafka-lb.fahmy-system.svc.cluster.local:9092,EXTERNAL://<load-balancer-ip>:9093
+          - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+            value: CLIENT
+          - name: KAFKA_DEFAULT_REPLICATION_FACTOR
+            value: "1"
         volumeMounts:
         - mountPath: /bitnami
           name: kafka-vol-1
@@ -83,8 +93,14 @@ spec:
   selector:
     app: kafka
   ports:
-    - protocol: TCP
-      port: 9092
-      targetPort: 9092
+    - name: 'internal-access'
       nodePort: 30004
+      port: 9092
+      protocol: TCP
+      targetPort: 9092
+    - name: 'external-access'
+      nodePort: 30006
+      port: 9093
+      protocol: TCP
+      targetPort: 9093
   type: LoadBalancer

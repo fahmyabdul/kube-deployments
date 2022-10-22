@@ -94,6 +94,7 @@ metadata:
 spec:
   selector:
     app: redis
+  loadBalancerIP: 192.168.49.4
   ports:
     - protocol: TCP
       port: 6379

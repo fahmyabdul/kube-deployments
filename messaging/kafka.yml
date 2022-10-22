@@ -64,11 +64,11 @@ spec:
           - name: ALLOW_PLAINTEXT_LISTENER
             value: "yes"
           - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
-            value: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+            value: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT,EXTERNAL2:PLAINTEXT
           - name: KAFKA_CFG_LISTENERS
-            value: CLIENT://:9092,EXTERNAL://:9093
+            value: CLIENT://:9092,EXTERNAL://:9093,EXTERNAL2://:30006
           - name: KAFKA_CFG_ADVERTISED_LISTENERS
-            value: CLIENT://kafka-lb.fahmy-system.svc.cluster.local:9092,EXTERNAL://<load-balancer-ip>:9093
+            value: CLIENT://kafka-lb.fahmy-system.svc.cluster.local:9092,EXTERNAL://192.168.49.6:9093,EXTERNAL2://<ip-public/domain>:30006
           - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
             value: CLIENT
           - name: KAFKA_DEFAULT_REPLICATION_FACTOR
@@ -92,6 +92,7 @@ metadata:
 spec:
   selector:
     app: kafka
+  loadBalancerIP: 192.168.49.6
   ports:
     - name: 'internal-access'
       nodePort: 30004

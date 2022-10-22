@@ -1,0 +1,63 @@
+
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: fahmy-system
+  name: kafka-ui
+  labels:
+    app: kafka-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui
+  template:
+    metadata:
+      labels:
+        app: kafka-ui
+    spec:
+      containers:
+      - name: kafka-ui
+        image: provectuslabs/kafka-ui:latest
+        env:
+          - name: KAFKA_CLUSTERS_0_NAME
+            value: yourclustername
+          - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+            value: kafka-lb.fahmy-system.svc.cluster.local:9092
+          - name: KAFKA_0_ZOOKEEPER
+            value: zookeeper-lb.fahmy-system.svc.cluster.local:2181
+          - name: AUTH_TYPE
+            value: "LOGIN_FORM"
+          - name: SPRING_SECURITY_USER_NAME
+            value: yourusername
+          - name: SPRING_SECURITY_USER_PASSWORD
+            value: uniquepassword
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: "1"
+          requests:
+            memory: 512Mi
+            cpu: "0.2"
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: fahmy-system
+  name: kafka-ui-lb
+  labels:
+    app: kafka-ui-lb
+spec:
+  selector:
+    app: kafka-ui
+  loadBalancerIP: 192.168.49.7
+  ports:
+    - name: 'internal-access'
+      nodePort: 30007
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  type: LoadBalancer

@@ -64,7 +64,7 @@ spec:
         - name: MONGO_INITDB_ROOT_PASSWORD
           value: example
         volumeMounts:
-        - mountPath: /data
+        - mountPath: /data/db
           name: mongo-vol-1
       volumes:
       - name: mongo-vol-1

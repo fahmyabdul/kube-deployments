@@ -64,7 +64,7 @@ For example:
 
 <!-- CONTRIBUTIONS -->
 ## Contributions
-You're more than welcome to add more kubernetes deployments example to this repository. Lets add more examples to this repository to help us fellow kubernetes beginners to learn more about kubernetes deployments.
+You're more than welcome to add more kubernetes deployments example to this repository as well as modifying the existing examples to be a better example. Lets add more examples to this repository to help us fellow kubernetes beginners to learn more about kubernetes deployments.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

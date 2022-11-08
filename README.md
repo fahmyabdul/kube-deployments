@@ -36,11 +36,11 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-This repository contains various examples of kubernetes deployments files. All of the examples has been tested using an on-premise Rancher's RKE2 cluster.
+This repository contains various examples of kubernetes deployments files. All of the examples has been tested using an on-premise **Rancher's RKE2** cluster.
 
 <!-- USAGE -->
 ## Usage
-As I used Rancher's RKE2 distribution, you might need to change some of the deployments configuration in accordance to your prefered kubernetes distribution, for example the storage class for these deployments uses **openebs** storage class, you let it or change it to your own storage class. Also, the namespace are set to `fahmy-system`, you might want to change that to your own namespace.
+As I used Rancher's RKE2 distribution, you might need to change some of the deployments configuration in accordance to your prefered kubernetes distribution, for example the storage class for these deployments uses `openebs` storage class, you can let it be or change it to your own storage class. Also, the namespace are set to `fahmy-system`, you might want to change that to your own namespace.
 
 To use the deployments file, execute the command below:
     

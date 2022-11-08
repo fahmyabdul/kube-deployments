@@ -42,6 +42,14 @@ This repository contains various examples of kubernetes deployments files. All o
 ## Usage
 As I used Rancher's RKE2 distribution, you might need to change some of the deployments configuration in accordance to your prefered kubernetes distribution, for example the storage class for these deployments uses `openebs` storage class, you can let it be or change it to your own storage class. Also, the namespace are set to `fahmy-system`, you might want to change that to your own namespace.
 
+Clone this repository:
+    
+    git clone https://github.com/fahmyabdul/kube-deployments
+
+Move to kube-deployments directory:
+
+    cd kube-deployments
+
 To use the deployments file, execute the command below:
     
     kubectl apply -f <deployment_filename>.yml
@@ -52,7 +60,7 @@ For example:
 
 <!-- REFERENCE -->
 ## Reference
-[![Kubernetes][Kubernetes]][Kubernetes-url] [![Rancher][Rancher]][Rancher-url]
+[![Kubernetes][Kubernetes]][Kubernetes-url] [![Rancher][Rancher]][Rancher-url] [![MongoDB][MongoDB]][MongoDB-url] [![Postgres][Postgres]][Postgres-url] [![Redis][Redis]][Redis-url]
 
 <!-- CONTRIBUTIONS -->
 ## Contributions
@@ -74,4 +82,11 @@ You're more than welcome to add more kubernetes deployments example to this repo
 [Rancher-url]: https://www.rancher.com/
 [Kubernetes]: https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white
 [Kubernetes-url]: https://kubernetes.io/
-
+[MongoDB]: https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white
+[MongoDB-url]: https://www.mongodb.com/
+[Postgres]: https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white
+[Postgres-url]: https://www.postgresql.org/
+[Redis]: https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white
+[Redis-url]: https://redis.io/
+[Kafka]: https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka
+[Kafka-url]: https://kafka.apache.org/

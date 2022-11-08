@@ -7,7 +7,7 @@
     <img src="https://raw.githubusercontent.com/fahmyabdul/fahmyabdul.github.io/main/assets/img/flg-round.png" alt="Logo" width="100" height="100">
   </a>
 
-<h3 align="center">Kubernetes Deployments</h3>
+<h3 align="center">Kube-Deployments</h3>
 
   <p align="center">
     Various Kubernetes Deployments Examples
